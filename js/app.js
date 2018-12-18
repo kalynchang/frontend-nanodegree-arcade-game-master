@@ -3,26 +3,26 @@ let wins = 0;
 let winsDisplay = document.querySelector('.wins');
 winsDisplay.textContent = `Wins: ${wins}`;
 
-// Enemies our player must avoid
-var Enemy = function(x, y, speed) {
+class Enemy {
+  constructor(x, y, speed) {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
     this.x = x;
     this.y = y;
     this.speed = speed;
-};
+  }
 
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt) {
+  // Update the enemy's position, required method for game
+  // Parameter: dt, a time delta between ticks
+  update(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
     this.x += this.speed * dt;
     // Reset bug position once they reach the end of the board
     if (this.x > 505) {
-        this.x = -50;
+      this.x = -50;
     }
     // If player collides with bug, reset position and set wins counter to 0
     const left = this.x - 75;
@@ -30,48 +30,50 @@ Enemy.prototype.update = function(dt) {
     const top = this.y - 50;
     const bot = this.y + 50;
     if (player.x < right && player.x > left && player.y < bot && player.y > top) {
-        player.reset();
-        wins = 0;
-        winsDisplay.textContent = `Wins: ${wins}`;
+      player.reset();
+      wins = 0;
+      winsDisplay.textContent = `Wins: ${wins}`;
     }
-};
+  }
 
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
+  // Draw the enemy on the screen, required method for game
+  render() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
+  }
+}
 
 // Now write your own player class
-// This class requires an update(), render() and
+// This class requires an update(), render(), reset(), and
 // a handleInput() method.
-var Player = function() {
+class Player {
+  constructor() {
     // The image/sprite for our player, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/char-boy.png';
     this.x = 202;
     this.y = 404;
-};
+  }
 
-Player.prototype.reset = function() {
+  reset() {
     // Reset positions to initial positions
     this.x = 202;
     this.y = 404;
-}
+  }
 
-Player.prototype.update = function() {
+  update() {
     // If player reaches the water, reset position and increment wins counter
     if (this.y === -11) {
-        this.reset();
-        wins += 1;
-        winsDisplay.textContent = `Wins: ${wins}`;
+      this.reset();
+      wins += 1;
+      winsDisplay.textContent = `Wins: ${wins}`;
     }
-};
+  }
 
-Player.prototype.render = function() {
+  render() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
+  }
 
-Player.prototype.handleInput = function(input) {
+  handleInput(input) {
     // Move by one square left, right, up or down
     // Keeps player inside the game board
     let updated;
@@ -88,7 +90,8 @@ Player.prototype.handleInput = function(input) {
       updated = this.y + 83;
       this.y = updated >= 487 ? this.y : updated;
     }
-};
+  }
+}
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -105,13 +108,13 @@ const player = new Player();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
-document.addEventListener('keyup', function(e) {
-    var allowedKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
-    };
+document.addEventListener('keyup', (e) => {
+  const allowedKeys = {
+    37: 'left',
+    38: 'up',
+    39: 'right',
+    40: 'down'
+  };
 
-    player.handleInput(allowedKeys[e.keyCode]);
+  player.handleInput(allowedKeys[e.keyCode]);
 });
